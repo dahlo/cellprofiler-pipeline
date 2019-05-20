@@ -1,0 +1,24 @@
+language: python
+
+python:
+  - "3.7-dev"  # 3.7 development branch
+
+notifications:
+  email: false
+
+before_install:
+  - docker build --no-cache=true -t "benblamey/image_analysis_cellprofiler_worker:latest" ./server
+  - docker build --no-cache=true -t "benblamey/image_analysis_client:latest" ./client
+
+install:
+  - pip install ./server
+  - pip install ./client
+
+script:
+  - pytest
+
+deploy:
+  provider: script
+  script: bash docker_push.sh
+  on:
+    branch: master

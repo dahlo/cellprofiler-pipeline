@@ -1,0 +1,8 @@
+setup.py
+haste/k8/main.py
+haste_image_pipeline_server.egg-info/PKG-INFO
+haste_image_pipeline_server.egg-info/SOURCES.txt
+haste_image_pipeline_server.egg-info/dependency_links.txt
+haste_image_pipeline_server.egg-info/namespace_packages.txt
+haste_image_pipeline_server.egg-info/requires.txt
+haste_image_pipeline_server.egg-info/top_level.txt
