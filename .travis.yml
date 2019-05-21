@@ -7,7 +7,7 @@ notifications:
   email: false
 
 before_install:
-  - docker build --no-cache=true -t "benblamey/haste_pipeline_worker:latest" ./server
+  - docker build --no-cache=true -t "benblamey/haste_pipeline_worker:latest" ./worker
   - docker build --no-cache=true -t "benblamey/haste_pipeline_client:latest" ./client
 
 install:
