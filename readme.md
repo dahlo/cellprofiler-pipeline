@@ -23,3 +23,12 @@ python3 -m haste.pipeline.client --include png --tag foo --host localhost /foo
 
 ```
 
+
+To run locally, with containers:
+
+```
+docker build --no-cache=true -t "benblamey/haste_pipeline_client:latest" ./client
+docker run benblamey/haste_pipeline_client:latest --include png --tag foo --host localhost /foo
+
+...
+```

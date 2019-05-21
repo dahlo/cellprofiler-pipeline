@@ -3,7 +3,7 @@ import argparse
 import pika
 from sys import argv
 
-ARG_PARSE_PROG_NAME = 'python3 -u -m haste.k8.worker'
+ARG_PARSE_PROG_NAME = 'python3 -u -m haste.pipeline.worker'
 
 
 def parse_args():
