@@ -1,6 +1,7 @@
 import argparse
 
 import pika
+from pika import PlainCredentials
 from sys import argv
 
 ARG_PARSE_PROG_NAME = 'python3 -u -m haste.pipeline.worker'
@@ -39,7 +40,8 @@ if __name__ == '__main__':
     # tag = args.tag
     cli_rabbitmq_host = args.host
 
-    connection = pika.BlockingConnection(pika.ConnectionParameters(cli_rabbitmq_host))
+    connection = pika.BlockingConnection(
+        pika.ConnectionParameters(cli_rabbitmq_host, credentials=PlainCredentials('guest', 'guest')))
     channel = connection.channel()
 
     channel.queue_declare(queue='files')
