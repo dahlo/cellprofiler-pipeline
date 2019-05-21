@@ -9,4 +9,4 @@ COPY setup.py /app/setup.py
 RUN pip3 install /app/
 
 
-CMD ["python","-m","haste.k8.client","somehostname"]
+ENTRYPOINT ["python","-m","haste.k8.client"]

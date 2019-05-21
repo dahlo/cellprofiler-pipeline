@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(name='haste_image_pipeline_client',
       version='0.10',
-      packages=['haste.k8'],
+      packages=['haste.k8.server'],
       namespace_packages=[
           'haste',
           'haste.k8',
