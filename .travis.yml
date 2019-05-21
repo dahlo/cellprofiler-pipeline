@@ -7,8 +7,8 @@ notifications:
   email: false
 
 before_install:
-  - docker build --no-cache=true -t "benblamey/image_analysis_cellprofiler_worker:latest" ./server
-  - docker build --no-cache=true -t "benblamey/image_analysis_client:latest" ./client
+  - docker build --no-cache=true -t "benblamey/haste_pipeline_worker:latest" ./server
+  - docker build --no-cache=true -t "benblamey/haste_pipeline_client:latest" ./client
 
 install:
   - pip install ./server
