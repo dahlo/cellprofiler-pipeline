@@ -9,4 +9,4 @@ COPY setup.py /app/setup.py
 RUN pip3 install /app/
 
 
-ENTRYPOINT ["python","-m","haste.k8.worker"]
+ENTRYPOINT ["python","-m","haste.pipeline.client"]
