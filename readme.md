@@ -8,18 +8,17 @@ To run locally:
 
 # Install:
 
-python3 -m pip install -e ./server
+python3 -m pip install -e ./worker
 python3 -m pip install -e ./client
 
 # Start rabbitmq:
 rabbitmq-server
 
+# Start the worker:
+python3 -m haste.pipeline.worker --host localhost /foo
 
-# Start the server:
-python3 -m haste.k8.server localhost
-
-# Run the client:
-python3 -m haste.k8.client localhost
+# Start the client:
+python3 -m haste.pipeline.client --include png --tag foo --host localhost /foo
 
 
 ```

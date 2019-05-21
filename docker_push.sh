@@ -3,5 +3,5 @@
 
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
-docker push benblamey/image_analysis_cellprofiler_worker:latest
-docker push benblamey/image_analysis_client:latest
+docker push benblamey/haste_pipeline_worker:latest
+docker push benblamey/haste_pipeline_client:latest

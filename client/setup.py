@@ -2,12 +2,12 @@
 
 from setuptools import setup
 
-setup(name='haste_image_pipeline_client',
+setup(name='haste_pipeline_client',
       version='0.10',
-      packages=['haste.k8.server'],
+      packages=['haste.pipeline.server'],
       namespace_packages=[
           'haste',
-          'haste.k8',
+          'haste.pipeline',
       ],
       author='Ben Blamey',
       author_email='ben.blamey@it.uu.se',
