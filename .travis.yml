@@ -11,7 +11,7 @@ before_install:
   - docker build --no-cache=true -t "benblamey/haste_pipeline_client:latest" ./client
 
 install:
-  - pip install ./server
+  - pip install ./worker
   - pip install ./client
 
 script:
