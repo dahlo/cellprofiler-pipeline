@@ -1,8 +1,0 @@
-setup.py
-haste/pipeline/client/__main__.py
-haste_pipeline_client.egg-info/PKG-INFO
-haste_pipeline_client.egg-info/SOURCES.txt
-haste_pipeline_client.egg-info/dependency_links.txt
-haste_pipeline_client.egg-info/namespace_packages.txt
-haste_pipeline_client.egg-info/requires.txt
-haste_pipeline_client.egg-info/top_level.txt

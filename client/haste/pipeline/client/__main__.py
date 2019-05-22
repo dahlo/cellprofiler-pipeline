@@ -38,11 +38,15 @@ def main():
     if not include.startswith('.'):
         include = '.' + include
     tag = args.tag
-    cli_rabbitmq_host = args.host
+    rabbitmq_host = args.host
     connection = pika.BlockingConnection(
-        pika.ConnectionParameters(cli_rabbitmq_host, credentials=PlainCredentials('guest', 'guest')))
+        pika.ConnectionParameters(rabbitmq_host, credentials=PlainCredentials('guest', 'guest')))
     channel = connection.channel()
     channel.queue_declare(queue='files')
+
+    logging.info(f'starting with args {[path, include, tag, rabbitmq_host]} (excl. creds)')
+
+
     try:
         filenames_previous = set()
 

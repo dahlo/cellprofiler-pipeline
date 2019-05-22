@@ -1,2 +1,0 @@
-haste
-haste.k8
