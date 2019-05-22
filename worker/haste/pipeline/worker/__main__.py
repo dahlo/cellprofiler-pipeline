@@ -14,8 +14,8 @@ def parse_args():
     # parser.add_argument('--include', type=str, nargs='?', help='include only files with this extension')
     # parser.add_argument('--tag', type=str, nargs='?', help='short ASCII tag to identify this machine (e.g. ben-laptop)')
     parser.add_argument('--host', type=str, nargs='?', help='Hostname for RabbitMQ', default='localhost')
-    parser.add_argument('--username', type=str, nargs='?', help='Username for HASTE', default='guest')
-    parser.add_argument('--password', type=str, nargs='?', help='Password for HASTE', default='guest')
+    parser.add_argument('--username', type=str, nargs='?', help='Username for AMPQ', default='guest')
+    parser.add_argument('--password', type=str, nargs='?', help='Password for AMPQ', default='guest')
     #
     # parser.add_argument('--x-preprocessing-cores', default=1, type=int)
     # parser.add_argument('--x-mode', default=1, type=int)
