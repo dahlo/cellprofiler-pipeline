@@ -2,7 +2,7 @@
 
 
 
-To run locally:
+To run locally (for development):
 
 ```
 
@@ -15,10 +15,10 @@ python3 -m pip install -e ./client
 rabbitmq-server
 
 # Start the worker:
-python3 -m haste.pipeline.worker --host localhost /foo
+python3 -m haste.pipeline.worker --host localhost /Users/benblamey/projects/haste/haste-desktop-agent-images/target
 
 # Start the client:
-python3 -m haste.pipeline.client --include png --tag foo --host localhost /foo
+python3 -m haste.pipeline.client --include png --tag foo --host localhost /Users/benblamey/projects/haste/haste-desktop-agent-images/target
 
 
 ```
@@ -28,7 +28,8 @@ To run locally, with containers:
 
 ```
 docker build --no-cache=true -t "benblamey/haste_pipeline_client:latest" ./client
-docker run benblamey/haste_pipeline_client:latest --include png --tag foo --host localhost /foo
-
+docker build --no-cache=true -t "benblamey/haste_pipeline_worker:latest" ./client
+docker run benblamey/haste_pipeline_client:latest --include png --tag foo --host localhost /Users/benblamey/projects/haste/haste-desktop-agent-images
+docker run benblamey/haste_pipeline_worker:latest --tag foo --host localhost /Users/benblamey/projects/haste/haste-desktop-agent-images
 ...
 ```

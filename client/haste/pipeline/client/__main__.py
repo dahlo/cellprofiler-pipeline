@@ -1,11 +1,13 @@
 import argparse
-
+import os
+import logging
 import pika
 import time
 from pika import PlainCredentials
 from sys import argv
 
 ARG_PARSE_PROG_NAME = 'python3 -u -m haste.pipeline.client'
+PAUSE_SECS = 5
 
 
 def parse_args():
@@ -28,34 +30,69 @@ def parse_args():
     return args
 
 
-def callback(ch, method, properties, body):
-    print(" [x] Received %r" % body)
-
-
-if __name__ == '__main__':
+def main():
+    global include, filenames_previous
     args = parse_args()
-
-    path = args.path
+    path = args.path[0]
     include = args.include
+    if not include.startswith('.'):
+        include = '.' + include
     tag = args.tag
     cli_rabbitmq_host = args.host
-
     connection = pika.BlockingConnection(
         pika.ConnectionParameters(cli_rabbitmq_host, credentials=PlainCredentials('guest', 'guest')))
     channel = connection.channel()
-
     channel.queue_declare(queue='files')
-
     try:
+        filenames_previous = set()
+
         while True:
-            body = f'Hello World! {time.time()}'
+            time_start = time.time()
 
-            channel.basic_publish(exchange='',
-                                  routing_key='files',
-                                  body=body)
-            print(f" [x] Sent {body}")
+            logging.info(f'starting dir listing of {path}')
 
-            time.sleep(10)
+            filenames = os.listdir(path)
+
+            filenames = list(filter(lambda filename: filename.endswith(include), filenames))
+
+            logging.debug(filenames)
+
+            filenames = list(filter(lambda filename: filename not in filenames_previous, filenames))
+
+            if len(filenames) == 0:
+                logging.info('no new files found.')
+
+            for filename in filenames:
+                # body = f'Hello World! {time.time()}'
+                body = filename
+
+                # TODO: some encoding issue here?! -- use strings
+                hdrs = {"tag": tag,
+                        "timestamp": str(time_start),
+                        "path": str(path)}
+                properties = pika.BasicProperties(app_id='haste.pipeline.client',
+                                                  content_type='application/json',
+                                                  headers=hdrs)
+
+
+                channel.basic_publish(exchange='',
+                                      routing_key='files',
+                                      body=body,
+                                      properties=properties)
+                logging.info(f"Sent {body}")
+
+            pause = (time_start + 5) - time.time()
+
+            if pause < 0:
+                logging.warn(f'dir listing overran by {-pause} seconds')
+            else:
+                time.sleep(pause)
+
+            filenames_previous = set(filenames)
 
     finally:
         connection.close()
+
+
+if __name__ == '__main__':
+    main()
