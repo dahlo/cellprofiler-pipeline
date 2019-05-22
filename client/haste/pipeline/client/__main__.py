@@ -9,6 +9,10 @@ from sys import argv
 ARG_PARSE_PROG_NAME = 'python3 -u -m haste.pipeline.client'
 PAUSE_SECS = 5
 
+LOGGING_LEVEL = logging.INFO
+LOGGING_FORMAT_DATE = '%Y-%m-%d %H:%M:%S.%d3'
+LOGGING_FORMAT = '%(asctime)s - AGENT - %(threadName)s - %(levelname)s - %(message)s'
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Watch directory and stream new files to HASTE',
@@ -31,6 +35,10 @@ def parse_args():
 
 
 def main():
+    logging.basicConfig(level=LOGGING_LEVEL,
+                        format=LOGGING_FORMAT,
+                        datefmt=LOGGING_FORMAT_DATE)
+
     global include, filenames_previous
     args = parse_args()
     path = args.path[0]
@@ -39,12 +47,16 @@ def main():
         include = '.' + include
     tag = args.tag
     rabbitmq_host = args.host
+
+    logging.info(f'starting with args {[path, include, tag, rabbitmq_host]} (excl. creds)')
+
+
     connection = pika.BlockingConnection(
         pika.ConnectionParameters(rabbitmq_host, credentials=PlainCredentials('guest', 'guest')))
     channel = connection.channel()
     channel.queue_declare(queue='files')
 
-    logging.info(f'starting with args {[path, include, tag, rabbitmq_host]} (excl. creds)')
+    logging.info('connected to AMPQ.')
 
 
     try:
