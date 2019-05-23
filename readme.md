@@ -8,18 +8,22 @@ To run locally (for development):
 
 # Install:
 
-python3 -m pip install -e ./worker
+python2 -m pip install --user -e ./worker
 python3 -m pip install -e ./client
 
 # Start rabbitmq:
 rabbitmq-server
 
+rabbitmqadmin delete queue name='files'
+
 # Start the worker:
-python3 -m haste.pipeline.worker --host localhost /Users/benblamey/projects/haste/haste-desktop-agent-images/target
+python2 -m haste.pipeline.worker --host localhost /Users/benblamey/projects/haste/haste-desktop-agent-images/target
 
 # Start the client:
 python3 -m haste.pipeline.client --include png --tag foo --host localhost /Users/benblamey/projects/haste/haste-desktop-agent-images/target
 
+# Stop rabbitmq
+rabbitmqctl stop
 
 ```
 
@@ -28,8 +32,14 @@ To run locally, with containers:
 
 ```
 docker build --no-cache=true -t "benblamey/haste_pipeline_client:latest" ./client
-docker build --no-cache=true -t "benblamey/haste_pipeline_worker:latest" ./client
 docker run benblamey/haste_pipeline_client:latest --include png --tag foo --host localhost /Users/benblamey/projects/haste/haste-desktop-agent-images
+
+docker build --no-cache=true -t "benblamey/haste_pipeline_worker:latest" ./worker
 docker run benblamey/haste_pipeline_worker:latest --tag foo --host localhost /Users/benblamey/projects/haste/haste-desktop-agent-images
+
+docker run -it --entrypoint=/bin/bash benblamey/haste_pipeline_worker:latest -i
 ...
 ```
+
+
+

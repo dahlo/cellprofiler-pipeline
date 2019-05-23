@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import os
 import logging
 import pika
@@ -12,6 +13,12 @@ PAUSE_SECS = 5
 LOGGING_LEVEL = logging.INFO
 LOGGING_FORMAT_DATE = '%Y-%m-%d %H:%M:%S.%d3'
 LOGGING_FORMAT = '%(asctime)s - AGENT - %(threadName)s - %(levelname)s - %(message)s'
+
+# TODO
+def create_stream_id(stream_id_tag):
+    stream_id = datetime.datetime.today().strftime('%Y_%m_%d__%H_%M_%S') + '_' + stream_id_tag
+    return stream_id
+
 
 
 def parse_args():
@@ -47,6 +54,8 @@ def main():
         include = '.' + include
     tag = args.tag
     rabbitmq_host = args.host
+
+    stream_id = create_stream_id(tag)
 
     logging.info(f'starting with args {[path, include, tag, rabbitmq_host]} (excl. creds)')
 
@@ -85,7 +94,8 @@ def main():
                 # TODO: some encoding issue here?! -- use strings
                 hdrs = {"tag": tag,
                         "timestamp": str(time_start),
-                        "path": str(path)}
+                        "path": str(path),
+                        "stream_id": stream_id}
                 properties = pika.BasicProperties(app_id='haste.pipeline.client',
                                                   content_type='application/json',
                                                   headers=hdrs)
