@@ -11,6 +11,8 @@ COPY setup.py /app/setup.py
 RUN python -m pip install /app/
 
 RUN git clone https://github.com/CellProfiler/CellProfiler-plugins.git /CellProfiler-plugins
+RUN cd CellProfiler-plugins ; pip install -r requirements.txt
+
 
 # see the output more easily in k8 with -u = unbuffered
 ENTRYPOINT ["python","-u","-m","haste.pipeline.worker"]

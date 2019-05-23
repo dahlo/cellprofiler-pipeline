@@ -34,7 +34,7 @@ To run locally, with containers:
 docker build --no-cache=true -t "benblamey/haste_pipeline_client:latest" ./client
 docker run benblamey/haste_pipeline_client:latest --include png --tag foo --host localhost /Users/benblamey/projects/haste/haste-desktop-agent-images
 
-docker build --no-cache=true -t "benblamey/haste_pipeline_worker:latest" ./worker
+docker build -t "benblamey/haste_pipeline_worker:latest" ./worker
 docker run benblamey/haste_pipeline_worker:latest --tag foo --host localhost /Users/benblamey/projects/haste/haste-desktop-agent-images
 
 docker run -it --entrypoint=/bin/bash benblamey/haste_pipeline_worker:latest -i
