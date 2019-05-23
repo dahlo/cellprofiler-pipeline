@@ -82,12 +82,12 @@ def main():
 
             logging.debug(filenames)
 
-            filenames = list(filter(lambda filename: filename not in filenames_previous, filenames))
+            filenames_after_filter = list(filter(lambda filename: filename not in filenames_previous, filenames))
 
             if len(filenames) == 0:
                 logging.info('no new files found.')
 
-            for filename in filenames:
+            for filename in filenames_after_filter:
                 # body = f'Hello World! {time.time()}'
                 body = filename
 
