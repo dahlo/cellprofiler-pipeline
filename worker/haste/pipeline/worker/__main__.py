@@ -143,7 +143,8 @@ def callback(ch, method, properties, body):
             "-c",  # run headless.
 
             "--plugins-directory",
-            "/users/benblamey/projects/haste/CellProfiler-plugins",
+            # "/users/benblamey/projects/haste/CellProfiler-plugins",
+            "/CellProfiler-plugins",
 
             "--file-list",
             image_input_file_list_path,
