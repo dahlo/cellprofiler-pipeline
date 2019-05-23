@@ -174,7 +174,7 @@ def callback(ch, method, properties, body):
         metadata.update(headers)
 
         # This is 'magic' metadata -- its read by the 'MoveToDir' storage target.
-        metadata['original_filename'] = image_file_path
+        metadata['original_filename'] = filename
 
         with open(output_file_image_csv_path, 'r') as f:
             csv_reader = csv.DictReader(f)
