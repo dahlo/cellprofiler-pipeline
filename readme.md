@@ -36,6 +36,7 @@ docker run benblamey/haste_pipeline_client:latest --include png --tag foo --host
 
 docker build -t "benblamey/haste_pipeline_worker:latest" ./worker
 docker run benblamey/haste_pipeline_worker:latest --tag foo --host localhost /Users/benblamey/projects/haste/haste-desktop-agent-images
+docker push "benblamey/haste_pipeline_worker:latest"
 
 docker run -it --entrypoint=/bin/bash benblamey/haste_pipeline_worker:latest -i
 ...
