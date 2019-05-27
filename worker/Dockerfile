@@ -1,5 +1,65 @@
-#FROM python:2.7.16
-FROM cellprofiler/cellprofiler:3.1.8
+FROM ubuntu:16.04
+#FROM cellprofiler/cellprofiler:3.1.8
+
+
+# See:
+# https://github.com/CellProfiler/CellProfiler/wiki/Source-installation-(Ubuntu-16.04-LTS)
+# Many dependencies are broken.
+
+
+RUN apt-get update -y
+RUN apt-get upgrade -y
+RUN apt-get install -y \
+    build-essential    \
+    cython             \
+    git                \
+    libmysqlclient-dev \
+    libhdf5-dev        \
+    libxml2-dev        \
+    libxslt1-dev       \
+    openjdk-8-jdk      \
+    python-dev         \
+    python-pip         \
+    python-h5py        \
+    python-matplotlib  \
+    python-mysqldb     \
+    python-scipy       \
+    python-numpy       \
+    python-pytest      \
+    python-vigra       \
+    python-wxgtk3.0
+#    python-zmq (this is wrong version by default)
+
+
+
+
+RUN pip install --upgrade pip
+
+
+#RUN apt install -y openjdk-8-jdk
+
+RUN git clone https://github.com/CellProfiler/CellProfiler.git
+
+
+WORKDIR /CellProfiler
+RUN git checkout tags/v3.1.8
+RUN pip install -e . ; echo "return ok"
+
+RUN pip freeze
+
+# These dependencies are missing or wrong version.
+RUN pip install --upgrade Pillow
+RUN pip install pyzmq==15.3.0
+RUN pip install setuptools==36.2
+RUN pip install python-dateutil==2.8.0
+RUN pip install numpy==1.16.3
+
+RUN pip freeze
+
+
+WORKDIR /
+RUN git clone https://github.com/CellProfiler/CellProfiler-plugins.git /CellProfiler-plugins
+RUN cd /CellProfiler-plugins ; pip install -r requirements.txt
 
 
 # Set the working directory to /app
@@ -7,23 +67,23 @@ WORKDIR /app
 
 COPY haste /app/haste
 COPY setup.py /app/setup.py
-
-RUN pip install --upgrade pip
-
-
 RUN python -m pip install /app/
 
-RUN git clone https://github.com/CellProfiler/CellProfiler-plugins.git /CellProfiler-plugins
-RUN cd /CellProfiler-plugins ; pip install -r requirements.txt
-
-RUN pip freeze
+COPY dry-run /dry-run
 
 # This one seems to be missing
 RUN pip install imageio
+RUN pip install statistics
+RUN pip install pyjnius
+RUN pip install h5py --upgrade
+
+# /CellProfiler-plugins/runimagej.py seems to need an old versin of imagej
+RUN pip install imagej==0.1.1
+
 
 RUN pip freeze
 
+
+
 # see the output more easily in k8 with -u = unbuffered
 ENTRYPOINT ["python","-u","-m","haste.pipeline.worker"]
-
-#CMD [ "/bin/bash" ]

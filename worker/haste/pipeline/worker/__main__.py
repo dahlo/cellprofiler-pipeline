@@ -117,21 +117,20 @@ def callback(ch, method, properties, body):
 
     filename = body.decode('utf-8')  # TODO: hmmm... maybe this is ASCII? nm.
     headers = properties.headers
-
     logging.info('received: {} {}'.format(body, headers))
 
+    run_cp(filename, headers)
+
+
+def run_cp(filename, headers):
     tag = headers['tag']
     stream_id = headers['stream_id']
-
     config_for_tag = get_config_for_tag(tag)
-
     image_file_path = os.path.join(config_for_tag['root_path'], filename)
-
     image_input_file_list_path = create_data_file_list(image_file_path)
-
     cellprofiler_output_dir = tempfile.mkdtemp()  # make a new temp dir
+    
     # cellprofiler_output_dir = cellprofiler_output_dir.name
-
     try:
         # See: https://github.com/CellProfiler/CellProfiler/wiki/Adapting-CellProfiler-to-a-LIMS-environment#cmd
 
@@ -197,14 +196,15 @@ def callback(ch, method, properties, body):
                 stream_id,
                 config=config_for_tag['haste_storage_client_config'],
                 interestingness_model=model,
-                storage_policy=[tuple(p) for p in json.loads(config_for_tag['storage_policy'])]) # convert lists to tuples
+                storage_policy=[tuple(p) for p in
+                                json.loads(config_for_tag['storage_policy'])])  # convert lists to tuples
             haste_storage_clients_by_stream_id[tag] = hsc
 
         hsc.save(
-            timestamp=time.time(), # TODO
-            location=(0,0), # TODO
+            timestamp=time.time(),  # TODO
+            location=(0, 0),  # TODO
             substream_id=None,
-            blob_bytes=b'', # we're just moving the file -- leave this empty
+            blob_bytes=b'',  # we're just moving the file -- leave this empty
             metadata=metadata)
 
         # logging.debug("output _Image.csv: \n{}".format(fin.read()))

@@ -1,0 +1,36 @@
+#FROM python:2.7.16
+FROM cellprofiler/cellprofiler:3.1.8
+
+RUN pip install --upgrade pip
+
+RUN git clone https://github.com/CellProfiler/CellProfiler-plugins.git /CellProfiler-plugins
+RUN cd /CellProfiler-plugins ; pip install -r requirements.txt
+
+
+# Set the working directory to /app
+WORKDIR /app
+
+COPY haste /app/haste
+COPY setup.py /app/setup.py
+
+RUN python -m pip install /app/
+
+COPY dry-run /dry-run
+
+RUN pip freeze
+
+# This one seems to be missing
+RUN pip install imageio
+RUN pip install statistics
+
+RUN pip install python-dateutil==2.8.0
+RUN pip install numpy==1.16.3
+RUN pip install scipy==1.2.1
+RUN pip install dask==1.2.2
+
+RUN pip freeze
+
+# see the output more easily in k8 with -u = unbuffered
+#ENTRYPOINT ["python","-u","-m","haste.pipeline.worker"]
+
+#CMD [ "/bin/bash" ]
