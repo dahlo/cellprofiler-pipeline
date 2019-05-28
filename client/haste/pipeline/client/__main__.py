@@ -59,6 +59,7 @@ def main():
 
     logging.info(f'starting with args {[path, include, tag, rabbitmq_host]} (excl. creds)')
 
+    # TODO: make queue persistent between rabbitMQ restarts?
 
     connection = pika.BlockingConnection(
         pika.ConnectionParameters(rabbitmq_host, credentials=PlainCredentials(args.username, args.password)))

@@ -118,8 +118,20 @@ def callback(ch, method, properties, body):
     filename = body.decode('utf-8')  # TODO: hmmm... maybe this is ASCII? nm.
     headers = properties.headers
     logging.info('received: {} {}'.format(body, headers))
+    delivery_tag = method.delivery_tag
 
-    run_cp(filename, headers)
+    acked = False
+
+    try:
+        run_cp(filename, headers)
+
+        # if we got here without an exception, ack the message.]
+        ch.basic_ack(delivery_tag)
+        acked = True
+    finally:
+        if not acked:
+            # re-queue -- beware infinite loop...
+            ch.basic_nack(delivery_tag, requeue=True)
 
 
 def run_cp(filename, headers):
@@ -129,7 +141,7 @@ def run_cp(filename, headers):
     image_file_path = os.path.join(config_for_tag['root_path'], filename)
     image_input_file_list_path = create_data_file_list(image_file_path)
     cellprofiler_output_dir = tempfile.mkdtemp()  # make a new temp dir
-    
+
     # cellprofiler_output_dir = cellprofiler_output_dir.name
     try:
         # See: https://github.com/CellProfiler/CellProfiler/wiki/Adapting-CellProfiler-to-a-LIMS-environment#cmd
@@ -271,8 +283,9 @@ def main():
         pika.ConnectionParameters(ampq_host, credentials=PlainCredentials(args.username, args.password)))
     channel = connection.channel()
     channel.queue_declare(queue='files')
+    channel.basic_qos(prefetch_count=1)  # max 1 unacked message at time
     channel.basic_consume(queue='files',
-                          auto_ack=True,  # TODO: only ack when processed
+                          auto_ack=False,  # only ack when processed successfully 
                           on_message_callback=callback)
     print(' [*] Waiting for messages. To exit press CTRL+C')
     channel.start_consuming()
