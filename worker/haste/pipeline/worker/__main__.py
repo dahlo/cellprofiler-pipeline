@@ -142,7 +142,7 @@ def run_cp(filename, headers):
     image_input_file_list_path = create_data_file_list(image_file_path)
     cellprofiler_output_dir = tempfile.mkdtemp()  # make a new temp dir
 
-    if not os.path.exists(image_input_file_list_path):
+    if not os.path.exists(image_file_path):
         # Incase the client has been restarted, and the file already moved, it will no longer exist.
         logging.warn("image path doesnt exist: {} -- will ACK message".format(image_input_file_list_path))
         return
