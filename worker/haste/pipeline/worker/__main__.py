@@ -169,7 +169,12 @@ def run_cp(filename, headers):
         ]
         logging.debug("params: {}".format(params))
 
-        subprocess.call(params)
+        exit_code = subprocess.call(params)
+
+        logging.debug('exit code from cellprofiler wad {}'.format(exit_code))
+
+        # exlude the possibility of a race condition when reading back the output files.
+        time.sleep(1)
 
         # read the output
         output_files = os.listdir(cellprofiler_output_dir)
