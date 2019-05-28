@@ -165,6 +165,7 @@ def run_cp(filename, headers):
             # "-c",
             #
             "python2",
+            "-u",
             "-m",
 
             "cellprofiler",
@@ -191,7 +192,7 @@ def run_cp(filename, headers):
         logging.info("params: {}".format(params))
         logging.info(" ".join(params))
 
-        exit_code = subprocess.call(params)
+        exit_code = subprocess.call(params, shell=True, stderr=subprocess.STDOUT)
         # exit_code = subprocess.call(params, shell=True)
         # import cellprofiler
 
