@@ -45,10 +45,18 @@ docker run -it --entrypoint=/bin/bash benblamey/haste_pipeline_worker:latest -i
 # then...
 python2 -m cellprofiler -c  \
 --plugins-directory /CellProfiler-plugins \
--p ../dry-run/OutOfFocus-TestImages.docker run -it --entrypoint=/bin/bash benblamey/haste_pipeline_worker:latest -icppipe \
+-p ../dry-run/OutOfFocus-TestImages.cppipe \
 --file-list /dry-run/file-list.txt \
 -o .
-...
+
+
+
+
+
+
+
+
+
 
 # run python script, with dev default config:
 docker run benblamey/haste_pipeline_worker:latest

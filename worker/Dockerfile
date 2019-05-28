@@ -54,6 +54,11 @@ RUN pip install setuptools==36.2
 RUN pip install python-dateutil==2.8.0
 RUN pip install numpy==1.16.3
 
+# tensorflow==1.13.1 gives this error on Ola's machine:
+# "TensorFlow library was compiled to use SSE4.1 instructions, but these aren't available on your machine. Aborted (core dumped)"
+# i.e. hardware is too old! Lets try an older version of the from 2018, when the 'measure image focus' plugin was originally developed.
+RUN pip install tensorflow==1.8.0
+
 RUN pip freeze
 
 
