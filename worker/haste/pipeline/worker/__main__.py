@@ -9,7 +9,7 @@ import csv
 import pika
 import time
 
-from cellprofiler import __main__ as cell_profiler_main
+# from cellprofiler import __main__ as cell_profiler_main
 
 
 import sys
@@ -36,7 +36,8 @@ DEFAULT_CONFIG = {
         {
             "tag": "foo",
             "root_path": "/Users/benblamey/projects/haste/haste-desktop-agent-images/target/",
-            "pipeline": "/Users/benblamey/projects/haste/haste-image-analysis-spjuth-lab/worker/dry-run/MeasureImageQuality-TestImages.cppipe",
+            # "pipeline": "/Users/benblamey/projects/haste/haste-image-analysis-spjuth-lab/worker/dry-run/MeasureImageQuality-TestImages.cppipe",
+            "pipeline": "/dry-run/MeasureImageQuality-TestImages.cppipe",
             # range 0..8. 0 = focussed, 8 = unfocused.
             "interestingness_function": "lambda row: float(row[\"ImageQuality_FocusScore_myimages\"])",
             "storage_policy": "[ [0.0, 0.199999999, \"move-to-trash\"], [0.2, 1.0, \"move-to-keep\"] ]",
@@ -149,7 +150,7 @@ def run_cp(filename, headers):
 
     if not os.path.exists(image_file_path):
         # Incase the client has been restarted, and the file already moved, it will no longer exist.
-        logging.warn("image path doesnt exist: {} -- will ACK message".format(image_input_file_list_path))
+        logging.warn("image path doesnt exist: {} -- will ACK message".format(image_file_path))
         return
 
     image_input_file_list_path = create_data_file_list(image_file_path)
@@ -163,8 +164,8 @@ def run_cp(filename, headers):
             # "/bin/bash",
             # "-c",
             #
-            # "python2",
-            # "-m",
+            "python2",
+            "-m",
 
             "cellprofiler",
 
@@ -185,17 +186,17 @@ def run_cp(filename, headers):
 
             "-o",
             cellprofiler_output_dir,
-
         ]
+
         logging.info("params: {}".format(params))
         logging.info(" ".join(params))
 
-        # exit_code = subprocess.call(params)
+        exit_code = subprocess.call(params)
         # exit_code = subprocess.call(params, shell=True)
         # import cellprofiler
 
         # exit_code = cp.main(params)
-        cell_profiler_main.main(params)
+        # cell_profiler_main.main(params)
 
 
         # logging.info('exit code from cellprofiler was {}'.format(exit_code))
@@ -239,6 +240,9 @@ def run_cp(filename, headers):
             hsc = haste_storage_clients_by_stream_id[stream_id]
         else:
             model = PreComputedInterestingnessModel()
+
+            logging.info('starting HSC...')
+
             hsc = HasteStorageClient(
                 stream_id,
                 config=config_for_tag['haste_storage_client_config'],
@@ -314,17 +318,26 @@ def main():
 
     config = json.loads(args.config)
 
-    logging.info('starting with args {} (excl. creds)'.format([ampq_host, config]))
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(ampq_host, credentials=PlainCredentials(args.username, args.password)))
-    channel = connection.channel()
-    channel.queue_declare(queue='files')
-    channel.basic_qos(prefetch_count=1)  # max 1 unacked message at time
-    channel.basic_consume(queue='files',
-                          auto_ack=False,  # only ack when processed successfully 
-                          on_message_callback=callback)
-    print(' [*] Waiting for messages. To exit press CTRL+C')
-    channel.start_consuming()
+    if False:
+        logging.info('starting with args {} (excl. creds)'.format([ampq_host, config]))
+        connection = pika.BlockingConnection(
+            pika.ConnectionParameters(ampq_host, credentials=PlainCredentials(args.username, args.password)))
+        channel = connection.channel()
+        channel.queue_declare(queue='files')
+        channel.basic_qos(prefetch_count=1)  # max 1 unacked message at time
+        channel.basic_consume(queue='files',
+                              auto_ack=False,  # only ack when processed successfully
+                              on_message_callback=callback)
+        logging.info(' [*] Waiting for messages. To exit press CTRL+C')
+        channel.start_consuming()
+
+    else:
+        run_cp('/dry-run/sample.tif', {
+            'tag':'foo',
+            'stream_id':'none',
+
+        })
+
 
 
 if __name__ == '__main__':
