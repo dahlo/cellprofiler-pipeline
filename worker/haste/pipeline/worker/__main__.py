@@ -9,9 +9,12 @@ import csv
 import pika
 import time
 
+from cellprofiler import __main__ as cell_profiler_main
+
+
 import sys
 
-from haste.pipeline.worker import cp
+
 from haste_storage_client.core import HasteStorageClient
 from pika import PlainCredentials
 from sys import argv
@@ -191,7 +194,9 @@ def run_cp(filename, headers):
         # exit_code = subprocess.call(params, shell=True)
         # import cellprofiler
 
-        cp.main(params)
+        # exit_code = cp.main(params)
+        cell_profiler_main.main(params)
+
 
         # logging.info('exit code from cellprofiler was {}'.format(exit_code))
 
