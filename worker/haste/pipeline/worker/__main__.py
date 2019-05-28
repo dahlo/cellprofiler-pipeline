@@ -8,6 +8,10 @@ import json
 import csv
 import pika
 import time
+
+import sys
+
+from haste.pipeline.worker import cp
 from haste_storage_client.core import HasteStorageClient
 from pika import PlainCredentials
 from sys import argv
@@ -17,7 +21,7 @@ import shutil
 ARG_PARSE_PROG_NAME = 'python2 -u -m haste.pipeline.worker'
 PAUSE_SECS = 5
 
-LOGGING_LEVEL = logging.DEBUG
+LOGGING_LEVEL = logging.info
 LOGGING_FORMAT_DATE = '%Y-%m-%d %H:%M:%S.%d3'
 LOGGING_FORMAT = '%(asctime)s - AGENT - %(threadName)s - %(levelname)s - %(message)s'
 
@@ -29,9 +33,9 @@ DEFAULT_CONFIG = {
         {
             "tag": "foo",
             "root_path": "/Users/benblamey/projects/haste/haste-desktop-agent-images/target/",
-            "pipeline": "/Users/benblamey/projects/haste/cell-profiler-work/OutOfFocus-TestImages.cppipe",
+            "pipeline": "/Users/benblamey/projects/haste/haste-image-analysis-spjuth-lab/worker/dry-run/MeasureImageQuality-TestImages.cppipe",
             # range 0..8. 0 = focussed, 8 = unfocused.
-            "interestingness_function": "lambda row: 1 - float(row['ImageFocus_Score_myimages']) / 8",
+            "interestingness_function": "lambda row: float(row[\"ImageQuality_FocusScore_myimages\"])",
             "storage_policy": "[ [0.0, 0.199999999, \"move-to-trash\"], [0.2, 1.0, \"move-to-keep\"] ]",
             "haste_storage_client_config": {
                 "haste_metadata_server": {
@@ -139,23 +143,31 @@ def run_cp(filename, headers):
     stream_id = headers['stream_id']
     config_for_tag = get_config_for_tag(tag)
     image_file_path = os.path.join(config_for_tag['root_path'], filename)
-    image_input_file_list_path = create_data_file_list(image_file_path)
-    cellprofiler_output_dir = tempfile.mkdtemp()  # make a new temp dir
 
     if not os.path.exists(image_file_path):
         # Incase the client has been restarted, and the file already moved, it will no longer exist.
         logging.warn("image path doesnt exist: {} -- will ACK message".format(image_input_file_list_path))
         return
 
+    image_input_file_list_path = create_data_file_list(image_file_path)
+    cellprofiler_output_dir = tempfile.mkdtemp()  # make a new temp dir
+
     # cellprofiler_output_dir = cellprofiler_output_dir.name
     try:
         # See: https://github.com/CellProfiler/CellProfiler/wiki/Adapting-CellProfiler-to-a-LIMS-environment#cmd
 
         params = [
-            # "echo",
-            "python2",
-            "-m",
+            # "/bin/bash",
+            # "-c",
+            #
+            # "python2",
+            # "-m",
+
             "cellprofiler",
+
+            "--log-level",
+            "DEBUG",
+
             "-c",  # run headless.
 
             # "--plugins-directory",
@@ -172,11 +184,16 @@ def run_cp(filename, headers):
             cellprofiler_output_dir,
 
         ]
-        logging.debug("params: {}".format(params))
+        logging.info("params: {}".format(params))
+        logging.info(" ".join(params))
 
-        exit_code = subprocess.call(params)
+        # exit_code = subprocess.call(params)
+        # exit_code = subprocess.call(params, shell=True)
+        # import cellprofiler
 
-        logging.debug('exit code from cellprofiler wad {}'.format(exit_code))
+        cp.main(params)
+
+        # logging.info('exit code from cellprofiler was {}'.format(exit_code))
 
         # exlude the possibility of a race condition when reading back the output files.
         time.sleep(1)
@@ -184,6 +201,7 @@ def run_cp(filename, headers):
         # read the output
         output_files = os.listdir(cellprofiler_output_dir)
 
+        # input()
         output_file_image_csv = find_output_file(output_files)
 
         output_file_image_csv_path = os.path.join(cellprofiler_output_dir, output_file_image_csv)
@@ -231,7 +249,7 @@ def run_cp(filename, headers):
             blob_bytes=b'',  # we're just moving the file -- leave this empty
             metadata=metadata)
 
-        # logging.debug("output _Image.csv: \n{}".format(fin.read()))
+        # logging.info("output _Image.csv: \n{}".format(fin.read()))
 
         # input()
 
@@ -243,7 +261,7 @@ def run_cp(filename, headers):
 
 
 def find_output_file(output_files):
-    logging.debug("output filenames: {}".format(output_files))
+    logging.info("output filenames: {}".format(output_files))
     for output_file in output_files:
         if output_file.endswith("_Image.csv"):
             return output_file
@@ -251,7 +269,7 @@ def find_output_file(output_files):
 
 
 def get_config_for_tag(tag):
-    print(config)
+    logging.info("config: {}".format(config))
     for c in config["configs"]:
         if c['tag'] == tag:
             return c
@@ -261,10 +279,10 @@ def get_config_for_tag(tag):
 def create_data_file_list(image_file_path):
     import tempfile
 
-    fp = tempfile.TemporaryFile()
+    # fp = tempfile.TemporaryFile()
 
     f = NamedTemporaryFile(delete=False)
-    logging.debug('created temp data file {}'.format(f.name))
+    logging.info('created temp data file {}'.format(f.name))
     # '/tmp/tmptjujjt'
     # f.write("Image_PathName\n{}\n".format(image_file_path).encode("utf-8"))
     f.write(image_file_path.encode("utf-8"))
