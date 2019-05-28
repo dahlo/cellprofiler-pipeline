@@ -40,15 +40,25 @@ docker push "benblamey/haste_pipeline_worker:latest"
 
 
 
-# run cellprofiler to test ('dry-run')
-docker run -it --entrypoint=/bin/bash benblamey/haste_pipeline_worker:latest -i 
-# then...
+docker run -it --entrypoint=/bin/bash benblamey/haste_pipeline_worker:latest -i
+ 
+# run cellprofiler to test ('dry-run') - with 'OutOfFocus' - requires plugins
 python2 -m cellprofiler -c  \
 --plugins-directory /CellProfiler-plugins \
 -p ../dry-run/OutOfFocus-TestImages.cppipe \
 --file-list /dry-run/file-list.txt \
 -o .
 
+# run cellprofiler to test ('dry-run') - with 'MeasureImageFocus' - doesn't require plugins
+
+docker run -it --entrypoint=/dry-run/run-imagequality.sh benblamey/haste_pipeline_worker:latest -i
+docker run benblamey/haste_pipeline_worker:latest
+
+python2 -m cellprofiler -c  \
+--plugins-directory /CellProfiler-plugins \
+-p ../dry-run/MeasureImageQuality-TestImages.cppipe \
+--file-list /dry-run/file-list.txt \
+-o .
 
 
 

@@ -39,7 +39,7 @@ RUN pip install --upgrade pip
 #RUN apt install -y openjdk-8-jdk
 
 RUN git clone https://github.com/CellProfiler/CellProfiler.git
-#RUN git clone https://github.com/CellProfiler/CellProfiler-plugins.git /CellProfiler-plugins
+RUN git clone https://github.com/CellProfiler/CellProfiler-plugins.git /CellProfiler-plugins
 
 
 
@@ -50,22 +50,22 @@ RUN pip install -e . ; echo "return ok"
 RUN pip freeze
 
 # These dependencies are missing or wrong version.
-#RUN pip install --upgrade Pillow
-#RUN pip install pyzmq==15.3.0
-#RUN pip install setuptools==36.2
-#RUN pip install python-dateutil==2.8.0
+RUN pip install --upgrade Pillow
+RUN pip install pyzmq==15.3.0
+RUN pip install setuptools==36.2
+RUN pip install python-dateutil==2.8.0
 RUN pip install numpy==1.16.3
 
 # tensorflow==1.13.1 gives this error on Ola's machine:
 # "TensorFlow library was compiled to use SSE4.1 instructions, but these aren't available on your machine. Aborted (core dumped)"
 # i.e. hardware is too old! Lets try an older version of the from 2018, when the 'measure image focus' plugin was originally developed.
-#RUN pip install tensorflow==1.8.0
+RUN pip install tensorflow==1.8.0
 
 RUN pip freeze
 
 
-#WORKDIR /
-#RUN cd /CellProfiler-plugins ; pip install -r requirements.txt
+WORKDIR /
+RUN cd /CellProfiler-plugins ; pip install -r requirements.txt
 
 
 # Set the working directory to /app
@@ -78,23 +78,18 @@ RUN python -m pip install /app/
 COPY dry-run /dry-run
 
 # This one seems to be missing
-#RUN pip install imageio
-#RUN pip install statistics
-#RUN pip install pyjnius
+RUN pip install imageio
+RUN pip install statistics
+RUN pip install pyjnius
 RUN pip install h5py --upgrade
 
 # /CellProfiler-plugins/runimagej.py seems to need an old versin of imagej
-#RUN pip install imagej==0.1.1
+RUN pip install imagej==0.1.1
 
 
 RUN pip freeze
 
-# For testing deps etc.
-#CMD python2 -m cellprofiler -c  \
-#    --plugins-directory /CellProfiler-plugins \
-#    -p ../dry-run/MeasureImageQuality-TestImages.cppipe \
-#    --file-list /dry-run/file-list.txt \
-#    -o .
 
-# see the output more easily in k8 with -u = unbuffered#
+
+# see the output more easily in k8 with -u = unbuffered
 ENTRYPOINT ["python","-u","-m","haste.pipeline.worker"]
