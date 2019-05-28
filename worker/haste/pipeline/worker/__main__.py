@@ -239,7 +239,7 @@ def find_output_file(output_files):
     for output_file in output_files:
         if output_file.endswith("_Image.csv"):
             return output_file
-    raise Exception('could not find output file {}'.format(output_files))
+    raise Exception("could not find output file {}".format(output_files))
 
 
 def get_config_for_tag(tag):
