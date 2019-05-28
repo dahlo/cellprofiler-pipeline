@@ -44,8 +44,8 @@ DEFAULT_CONFIG = {
             "haste_storage_client_config": {
                 "haste_metadata_server": {
                     # In K8, this is the service name (since we're in the same namespace'
-                    "connection_string": "mongodb://localhost:27017/streams"
-                    # "connection_string": "mongodb://mongodb.haste.svc.cluster:27017/streams"
+                    # "connection_string": "mongodb://localhost:27017/streams"
+                    "connection_string": "mongodb://mongodb.haste.svc.cluster:27017/streams"
                 },
                 "log_level": "DEBUG",
                 "targets": [
