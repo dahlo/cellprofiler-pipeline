@@ -142,6 +142,11 @@ def run_cp(filename, headers):
     image_input_file_list_path = create_data_file_list(image_file_path)
     cellprofiler_output_dir = tempfile.mkdtemp()  # make a new temp dir
 
+    if not os.path.exists(image_input_file_list_path):
+        # Incase the client has been restarted, and the file already moved, it will no longer exist.
+        logging.warn("image path doesnt exist: {} -- will ACK message".format(image_input_file_list_path))
+        return
+
     # cellprofiler_output_dir = cellprofiler_output_dir.name
     try:
         # See: https://github.com/CellProfiler/CellProfiler/wiki/Adapting-CellProfiler-to-a-LIMS-environment#cmd
@@ -229,6 +234,7 @@ def run_cp(filename, headers):
         # input()
 
     finally:
+        # TODO: turn this back on -- otherwise old dirs will fill up.
         # os.unlink(image_input_file_list_path)
         # shutil.rmtree(cellprofiler_output_dir)
         pass
