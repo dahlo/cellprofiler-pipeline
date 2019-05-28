@@ -54,13 +54,18 @@ python2 -m cellprofiler -c  \
 docker run -it --entrypoint=/dry-run/run-imagequality.sh benblamey/haste_pipeline_worker:latest -i
 docker run benblamey/haste_pipeline_worker:latest
 
+# with plugins
 python2 -m cellprofiler -c  \
 --plugins-directory /CellProfiler-plugins \
--p ../dry-run/MeasureImageQuality-TestImages.cppipe \
+-p /dry-run/MeasureImageQuality-TestImages.cppipe \
 --file-list /dry-run/file-list.txt \
 -o .
 
-
+# without plugins
+python2 -m cellprofiler -c  \
+-p /dry-run/MeasureImageQuality-TestImages.cppipe \
+--file-list /dry-run/file-list.txt \
+-o .
 
 
 

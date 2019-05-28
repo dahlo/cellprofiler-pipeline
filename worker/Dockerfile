@@ -4,7 +4,7 @@ FROM ubuntu:16.04
 
 # See:
 # https://github.com/CellProfiler/CellProfiler/wiki/Source-installation-(Ubuntu-16.04-LTS)
-# Many dependencies are broken.
+# Many dependencies are broken...
 
 
 RUN apt-get update -y

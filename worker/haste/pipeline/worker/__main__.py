@@ -141,9 +141,9 @@ def run_cp(filename, headers):
             "cellprofiler",
             "-c",  # run headless.
 
-            "--plugins-directory",
+            # "--plugins-directory",
             # "/users/benblamey/projects/haste/CellProfiler-plugins",
-            "/CellProfiler-plugins",
+            # "/CellProfiler-plugins",
 
             "--file-list",
             image_input_file_list_path,
