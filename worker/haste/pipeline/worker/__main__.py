@@ -210,6 +210,8 @@ def run_cp(filename, headers):
         if interestingness is None:
             raise Exception('interestingness was None - terminating.')
 
+        metadata['interestingness'] = interestingness
+
         if stream_id in haste_storage_clients_by_stream_id:
             hsc = haste_storage_clients_by_stream_id[stream_id]
         else:
