@@ -200,7 +200,7 @@ def run_cp(filename, headers):
         # cell_profiler_main.main(params)
 
 
-        # logging.info('exit code from cellprofiler was {}'.format(exit_code))
+        logging.info('exit code from cellprofiler was {}'.format(exit_code))
 
         # exlude the possibility of a race condition when reading back the output files.
         time.sleep(1)
@@ -319,7 +319,7 @@ def main():
 
     config = json.loads(args.config)
 
-    if False:
+    if True:
         logging.info('starting with args {} (excl. creds)'.format([ampq_host, config]))
         connection = pika.BlockingConnection(
             pika.ConnectionParameters(ampq_host, credentials=PlainCredentials(args.username, args.password)))
